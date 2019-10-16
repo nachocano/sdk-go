@@ -141,9 +141,18 @@ var (
 	WithMiddleware           = http.WithMiddleware
 	WithLongPollTarget       = http.WithLongPollTarget
 	WithListener             = http.WithListener
+	WithMaxIdleConns         = http.WithMaxIdleConns
+	WithMaxIdleConnsPerHost  = http.WithMaxIdleConnsPerHost
+	WithIdleConnTimeout      = http.WithIdleConnTimeout
+	WithTLSHandshakeTimeout  = http.WithTLSHandshakeTimeout
+}
 
-	// HTTP Context
+// DefaultMaxIdleConnsPerHost is the default value of Transport's
+// MaxIdleConnsPerHost.
+const DefaultMaxIdleConnsPerHost = 2
 
-	HTTPTransportContextFrom = http.TransportContextFrom
-	ContextWithHeader        = http.ContextWithHeader
+// HTTP Context
+
+HTTPTransportContextFrom = http.TransportContextFrom
+ContextWithHeader = http.ContextWithHeader
 )
