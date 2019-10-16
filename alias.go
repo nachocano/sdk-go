@@ -144,15 +144,9 @@ var (
 	WithMaxIdleConns         = http.WithMaxIdleConns
 	WithMaxIdleConnsPerHost  = http.WithMaxIdleConnsPerHost
 	WithIdleConnTimeout      = http.WithIdleConnTimeout
-	WithTLSHandshakeTimeout  = http.WithTLSHandshakeTimeout
-}
 
-// DefaultMaxIdleConnsPerHost is the default value of Transport's
-// MaxIdleConnsPerHost.
-const DefaultMaxIdleConnsPerHost = 2
+	// HTTP Context
 
-// HTTP Context
-
-HTTPTransportContextFrom = http.TransportContextFrom
-ContextWithHeader = http.ContextWithHeader
+	HTTPTransportContextFrom = http.TransportContextFrom
+	ContextWithHeader        = http.ContextWithHeader
 )

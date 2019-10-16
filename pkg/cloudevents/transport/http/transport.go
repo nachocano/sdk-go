@@ -98,8 +98,6 @@ func New(opts ...Option) (*Transport, error) {
 			Method: http.MethodPost,
 		},
 	}
-	t.Client = &http.Client{}
-	t.Client.Transport = http.DefaultTransport
 	if err := t.applyOptions(opts...); err != nil {
 		return nil, err
 	}
