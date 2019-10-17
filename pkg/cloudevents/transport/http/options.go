@@ -294,7 +294,7 @@ func WithIdleConnTimeout(idleConnTimeout time.Duration) Option {
 	return func(t *Transport) error {
 		transport, err := httpTransportFor(t)
 		if err != nil {
-			return fmt.Errorf("http max idle conn timeout option can not be set: %v", err)
+			return fmt.Errorf("http idle conn timeout option can not be set: %v", err)
 		}
 		transport.IdleConnTimeout = idleConnTimeout
 		return nil

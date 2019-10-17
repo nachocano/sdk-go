@@ -799,3 +799,165 @@ func TestWithLongPollTarget(t *testing.T) {
 		})
 	}
 }
+
+func TestWithIdleConnectionTimeout(t *testing.T) {
+	testCases := map[string]struct {
+		t               *Transport
+		idleConnTimeout time.Duration
+		want            *Transport
+		wantErr         string
+	}{
+		"no idle conn timeout": {
+			t: &Transport{},
+			want: &Transport{
+				Client: &http.Client{
+					Transport: http.DefaultTransport,
+				},
+			},
+		},
+		"idle conn timeout": {
+			t:               &Transport{},
+			idleConnTimeout: 5 * time.Second,
+			want: &Transport{
+				Client: &http.Client{
+					Transport: &http.Transport{
+						IdleConnTimeout: 5 * time.Second,
+					},
+				},
+			},
+		},
+		"nil transport": {
+			wantErr: `http idle conn timeout option can not be set: nil transport`,
+		},
+	}
+	for n, tc := range testCases {
+		t.Run(n, func(t *testing.T) {
+
+			err := tc.t.applyOptions(WithIdleConnTimeout(tc.idleConnTimeout))
+
+			if tc.wantErr != "" || err != nil {
+				var gotErr string
+				if err != nil {
+					gotErr = err.Error()
+				}
+				if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
+					t.Errorf("unexpected error (-want, +got) = %v", diff)
+				}
+				return
+			}
+
+			got := tc.t.Client.Transport.(*http.Transport)
+			if got.IdleConnTimeout != tc.idleConnTimeout {
+				t.Errorf("unexpected (want %s, got %s", tc.idleConnTimeout.String(), got.IdleConnTimeout.String())
+			}
+		})
+	}
+}
+
+func TestWithMaxIdleConnsPerHost(t *testing.T) {
+	testCases := map[string]struct {
+		t                   *Transport
+		maxIdleConnsPerHost int
+		want                *Transport
+		wantErr             string
+	}{
+		"no max idle conns per host": {
+			t: &Transport{},
+			want: &Transport{
+				Client: &http.Client{
+					Transport: http.DefaultTransport,
+				},
+			},
+		},
+		"max idle conn per host": {
+			t:                   &Transport{},
+			maxIdleConnsPerHost: 5,
+			want: &Transport{
+				Client: &http.Client{
+					Transport: &http.Transport{
+						MaxIdleConnsPerHost: 5,
+					},
+				},
+			},
+		},
+		"nil transport": {
+			wantErr: `http max idle conn per host option can not be set: nil transport`,
+		},
+	}
+	for n, tc := range testCases {
+		t.Run(n, func(t *testing.T) {
+
+			err := tc.t.applyOptions(WithMaxIdleConnsPerHost(tc.maxIdleConnsPerHost))
+
+			if tc.wantErr != "" || err != nil {
+				var gotErr string
+				if err != nil {
+					gotErr = err.Error()
+				}
+				if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
+					t.Errorf("unexpected error (-want, +got) = %v", diff)
+				}
+				return
+			}
+
+			got := tc.t.Client.Transport.(*http.Transport)
+			if got.MaxIdleConnsPerHost != tc.maxIdleConnsPerHost {
+				t.Errorf("unexpected (want %d, got %d", tc.maxIdleConnsPerHost, got.MaxIdleConnsPerHost)
+			}
+		})
+	}
+}
+
+func TestWithMaxIdleConns(t *testing.T) {
+	testCases := map[string]struct {
+		t            *Transport
+		maxIdleConns int
+		want         *Transport
+		wantErr      string
+	}{
+		"no max idle conns": {
+			t: &Transport{},
+			want: &Transport{
+				Client: &http.Client{
+					Transport: http.DefaultTransport,
+				},
+			},
+		},
+		"max idle conns": {
+			t:            &Transport{},
+			maxIdleConns: 100,
+			want: &Transport{
+				Client: &http.Client{
+					Transport: &http.Transport{
+						MaxIdleConnsPerHost: 100,
+					},
+				},
+			},
+		},
+		"nil transport": {
+			wantErr: `http max idle conn option can not be set: nil transport`,
+		},
+	}
+	for n, tc := range testCases {
+		t.Run(n, func(t *testing.T) {
+
+			err := tc.t.applyOptions(WithMaxIdleConns(tc.maxIdleConns))
+
+			if tc.wantErr != "" || err != nil {
+				var gotErr string
+				if err != nil {
+					gotErr = err.Error()
+				}
+				if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
+					t.Errorf("unexpected error (-want, +got) = %v", diff)
+				}
+				return
+			}
+
+			got := tc.t.Client.Transport.(*http.Transport)
+			if got.MaxIdleConns != tc.maxIdleConns {
+				t.Errorf("unexpected (want %d, got %d", tc.maxIdleConns, got.MaxIdleConns)
+			}
+		})
+	}
+}
