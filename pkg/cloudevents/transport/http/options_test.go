@@ -807,13 +807,15 @@ func TestWithIdleConnectionTimeout(t *testing.T) {
 		want            *Transport
 		wantErr         string
 	}{
-		"no idle conn timeout": {
-			t: &Transport{},
+		"negative idle conn timeout": {
+			t:               &Transport{},
+			idleConnTimeout: -1 * time.Second,
 			want: &Transport{
 				Client: &http.Client{
 					Transport: http.DefaultTransport,
 				},
 			},
+			wantErr: "http idle conn timeout option can not be negative: -1s",
 		},
 		"idle conn timeout": {
 			t:               &Transport{},
@@ -861,15 +863,17 @@ func TestWithMaxIdleConnsPerHost(t *testing.T) {
 		want                *Transport
 		wantErr             string
 	}{
-		"no max idle conns per host": {
-			t: &Transport{},
+		"negative max idle conns per host": {
+			t:                   &Transport{},
+			maxIdleConnsPerHost: -1,
 			want: &Transport{
 				Client: &http.Client{
 					Transport: http.DefaultTransport,
 				},
 			},
+			wantErr: "http max idle conn per host option can not be negative: -1",
 		},
-		"max idle conn per host": {
+		"valid max idle conn per host": {
 			t:                   &Transport{},
 			maxIdleConnsPerHost: 5,
 			want: &Transport{
@@ -915,13 +919,15 @@ func TestWithMaxIdleConns(t *testing.T) {
 		want         *Transport
 		wantErr      string
 	}{
-		"no max idle conns": {
-			t: &Transport{},
+		"negative max idle conns": {
+			t:            &Transport{},
+			maxIdleConns: -1,
 			want: &Transport{
 				Client: &http.Client{
 					Transport: http.DefaultTransport,
 				},
 			},
+			wantErr: "http max idle conn option can not be negative: -1",
 		},
 		"max idle conns": {
 			t:            &Transport{},
