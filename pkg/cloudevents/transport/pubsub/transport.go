@@ -50,6 +50,14 @@ type Transport struct {
 	// subscription if it does not exist.
 	AllowCreateSubscription bool
 
+	// NumGoroutines controls the number of goroutines we spawn to pull
+	// messages concurrently per subscription. See https://godoc.org/cloud.google.com/go/pubsub#ReceiveSettings.
+	NumGoRoutines int
+
+	// MaxOutstandingMessages is the maximum number of unprocessed messages
+	// (unacknowledged but not yet expired). See https://godoc.org/cloud.google.com/go/pubsub#ReceiveSettings.
+	MaxOutstandingMessages int
+
 	projectID      string
 	topicID        string
 	subscriptionID string
@@ -154,6 +162,8 @@ func (t *Transport) getOrCreateConnection(ctx context.Context, topic, subscripti
 	conn := &internal.Connection{
 		AllowCreateSubscription: t.AllowCreateSubscription,
 		AllowCreateTopic:        t.AllowCreateTopic,
+		NumGoRoutines:           t.NumGoRoutines,
+		MaxOutstandingMessages:  t.MaxOutstandingMessages,
 		Client:                  t.client,
 		ProjectID:               t.projectID,
 		TopicID:                 topic,

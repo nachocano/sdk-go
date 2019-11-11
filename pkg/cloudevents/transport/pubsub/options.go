@@ -197,3 +197,21 @@ func AllowCreateSubscription(allow bool) Option {
 		return nil
 	}
 }
+
+// NumGoroutines sets the number of goroutines we will spawn to pull
+// messages concurrently. This number is per subscription.
+func NumGoRoutines(goRoutines int) Option {
+	return func(t *Transport) error {
+		t.NumGoRoutines = goRoutines
+		return nil
+	}
+}
+
+// MaxOutstandingMessages sets the maximum number of unprocessed messages
+// (unacknowledged but not yet expired) allowed per subscription.
+func MaxOutstandingMessages(maxOutstandingMessages int) Option {
+	return func(t *Transport) error {
+		t.MaxOutstandingMessages = maxOutstandingMessages
+		return nil
+	}
+}

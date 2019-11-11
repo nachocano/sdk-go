@@ -22,6 +22,14 @@ type Connection struct {
 	// subscription if it does not exist.
 	AllowCreateSubscription bool
 
+	// NumGoroutines controls the number of goroutines we spawn to pull
+	// messages concurrently per subscription. See ReceiveSettings.NumGoroutines.
+	NumGoRoutines int
+
+	// MaxOutstandingMessages is the maximum number of unprocessed messages
+	// (unacknowledged but not yet expired). See ReceiveSettings.MaxOutstandingMessages.
+	MaxOutstandingMessages int
+
 	ProjectID string
 
 	Client *pubsub.Client
@@ -180,6 +188,12 @@ func (c *Connection) Receive(ctx context.Context, fn func(context.Context, *pubs
 	sub, err := c.getOrCreateSubscription(ctx)
 	if err != nil {
 		return err
+	}
+	if c.NumGoRoutines != 0 {
+		sub.ReceiveSettings.NumGoroutines = c.NumGoRoutines
+	}
+	if c.MaxOutstandingMessages != 0 {
+		sub.ReceiveSettings.MaxOutstandingMessages = c.MaxOutstandingMessages
 	}
 	// Ok, ready to start pulling.
 	return sub.Receive(ctx, func(ctx context.Context, m *pubsub.Message) {
